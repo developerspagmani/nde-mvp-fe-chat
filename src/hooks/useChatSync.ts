@@ -237,7 +237,21 @@ export function useChatSync(
     const connectWS = () => {
       if (isCleanedUp) return;
       
-      const socketUrl = `${import.meta.env.VITE_WS_BASE_URL}/ws?token=${token}`;
+      let wsBaseUrl = import.meta.env.VITE_WS_BASE_URL || '';
+      
+      // Upgrade http/https to ws/wss if incorrectly configured
+      if (wsBaseUrl.startsWith('https://')) {
+        wsBaseUrl = wsBaseUrl.replace('https://', 'wss://');
+      } else if (wsBaseUrl.startsWith('http://')) {
+        wsBaseUrl = wsBaseUrl.replace('http://', 'ws://');
+      }
+      
+      // Upgrade to secure WebSocket (wss) if frontend is loaded over HTTPS
+      if (window.location.protocol === 'https:' && wsBaseUrl.startsWith('ws://')) {
+        wsBaseUrl = wsBaseUrl.replace('ws://', 'wss://');
+      }
+
+      const socketUrl = `${wsBaseUrl}/ws?token=${token}`;
       ws = new WebSocket(socketUrl);
       wsRef.current = ws;
 
