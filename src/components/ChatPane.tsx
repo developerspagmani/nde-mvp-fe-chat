@@ -78,7 +78,7 @@ export default function ChatPane({
   const handleAddMember = async () => {
     if (!addUserId) return;
     try {
-      const res = await fetch(`http://localhost:3001/api/rooms/${activeRoomId}/members`, {
+      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/rooms/${activeRoomId}/members`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -99,7 +99,7 @@ export default function ChatPane({
   const handleRemoveMember = async (userId: number) => {
     if (!confirm('Are you sure you want to remove this member?')) return;
     try {
-      const res = await fetch(`http://localhost:3001/api/rooms/${activeRoomId}/members/${userId}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/rooms/${activeRoomId}/members/${userId}`, {
         method: 'DELETE',
         headers: {
           Authorization: `Bearer ${token}`
@@ -221,7 +221,7 @@ export default function ChatPane({
     formData.append('file', file);
 
     try {
-      const res = await fetch('http://localhost:3001/api/upload', {
+      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/upload`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`

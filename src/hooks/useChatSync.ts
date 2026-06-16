@@ -165,7 +165,7 @@ export function useChatSync(
       });
 
       // 2. Fetch remote DB snapshot to align state initially
-      fetch(`http://localhost:3001/api/rooms/${roomId}/crdt`, {
+      fetch(`${import.meta.env.VITE_API_BASE_URL}/api/rooms/${roomId}/crdt`, {
         headers: { Authorization: `Bearer ${token}` }
       })
         .then(async (res) => {
@@ -214,7 +214,7 @@ export function useChatSync(
         });
 
       // Fetch read receipts for this room
-      fetch(`http://localhost:3001/api/rooms/${roomId}/receipts`, {
+      fetch(`${import.meta.env.VITE_API_BASE_URL}/api/rooms/${roomId}/receipts`, {
         headers: { Authorization: `Bearer ${token}` }
       })
         .then(res => res.json())
@@ -237,7 +237,7 @@ export function useChatSync(
     const connectWS = () => {
       if (isCleanedUp) return;
       
-      const socketUrl = `ws://localhost:3001/ws?token=${token}`;
+      const socketUrl = `${import.meta.env.VITE_WS_BASE_URL}/ws?token=${token}`;
       ws = new WebSocket(socketUrl);
       wsRef.current = ws;
 

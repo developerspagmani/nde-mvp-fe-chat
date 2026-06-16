@@ -12,7 +12,7 @@ import ChatPane from './components/ChatPane';
 import RoomInfoPanel from './components/RoomInfoPanel';
 import CreateRoomDialog from './components/CreateRoomDialog';
 
-const API = 'http://localhost:3001/api';
+const API = `${import.meta.env.VITE_API_BASE_URL}/api`;
 
 export default function App() {
   // ---- Auth state -------------------------------------------------------
@@ -76,7 +76,7 @@ export default function App() {
       });
     },
     // onRoomMembersUpdated
-    (updatedRoomId) => {
+    () => {
       fetch(`${API}/rooms`, { headers: { Authorization: `Bearer ${token}` } })
         .then((r) => r.json())
         .then(setRooms)

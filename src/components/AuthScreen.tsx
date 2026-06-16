@@ -7,7 +7,7 @@ interface Props {
   onLogin: (token: string, user: User) => void;
 }
 
-const API = 'http://localhost:3001/api';
+const API = `${import.meta.env.VITE_API_BASE_URL}/api`;
 
 export default function AuthScreen({ onLogin }: Props) {
   const [isRegistering, setIsRegistering] = useState(false);

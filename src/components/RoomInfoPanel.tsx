@@ -38,7 +38,7 @@ export default function RoomInfoPanel({
     if (!editName.trim()) return;
     setIsSaving(true);
     try {
-      const res = await fetch(`http://localhost:3001/api/rooms/${activeRoom.id}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/rooms/${activeRoom.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
