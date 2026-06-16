@@ -79,13 +79,7 @@ export default function App() {
     () => {
       fetch(`${API}/rooms`, { headers: { Authorization: `Bearer ${token}` } })
         .then((r) => r.json())
-        .then((fetchedRooms) => {
-          setRooms(
-            fetchedRooms.map((r: any) =>
-              r.id === activeRoomId ? { ...r, unreadCount: 0 } : r
-            )
-          );
-        })
+        .then(setRooms)
         .catch(console.error);
     },
     // onRemovedFromRoom
@@ -125,13 +119,7 @@ export default function App() {
 
     fetch(`${API}/rooms`, { headers: { Authorization: `Bearer ${token}` } })
       .then((r) => r.json())
-      .then((fetchedRooms) => {
-        setRooms(
-          fetchedRooms.map((r: any) =>
-            r.id === activeRoomId ? { ...r, unreadCount: 0 } : r
-          )
-        );
-      })
+      .then(setRooms)
       .catch(console.error);
 
     fetch(`${API}/users`, { headers: { Authorization: `Bearer ${token}` } })
@@ -491,7 +479,7 @@ export default function App() {
       {/* Column 2: Room list */}
       {!sidebarCollapsed && (
         <RoomList
-          rooms={rooms.map((r) => r.id === activeRoomId ? { ...r, unreadCount: 0 } : r)}
+          rooms={rooms}
           activeRoomId={activeRoomId}
           currentUser={currentUser}
           typingUsers={typingUsers}
@@ -506,13 +494,7 @@ export default function App() {
             // Also refresh room list to get latest members
             fetch(`${API}/rooms`, { headers: { Authorization: `Bearer ${token}` } })
               .then((r) => r.json())
-              .then((fetchedRooms) => {
-                setRooms(
-                  fetchedRooms.map((r: any) =>
-                    r.id === id ? { ...r, unreadCount: 0 } : r
-                  )
-                );
-              })
+              .then(setRooms)
               .catch(console.error);
           }}
           onNewChat={() => setCreateOpen(true)}
