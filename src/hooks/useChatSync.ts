@@ -67,6 +67,7 @@ export function useChatSync(
   const docRef = useRef<LoroDoc | null>(null);
   const wsRef = useRef<WebSocket | null>(null);
   const isSyncingLocalRef = useRef<boolean>(false); // prevent infinite loop on local updates
+  const pendingReadReceiptRef = useRef<{ roomId: number; messageId: string } | null>(null);
 
   // IndexedDB Storage setup via localforage
   useEffect(() => {
@@ -281,6 +282,27 @@ export function useChatSync(
               }));
             }
             await localforage.removeItem(offlineQueueKey);
+          }
+
+          // Send pending read receipt if it is for the current room
+          if (pendingReadReceiptRef.current && pendingReadReceiptRef.current.roomId === roomId) {
+            ws?.send(JSON.stringify({
+              type: 'read_receipt',
+              data: { roomId, messageId: pendingReadReceiptRef.current.messageId }
+            }));
+            pendingReadReceiptRef.current = null;
+          } else {
+            // Fallback: send read receipt for the last message in current Loro doc if we have messages
+            if (docRef.current) {
+              const list = docRef.current.getList("messages");
+              const msgs = list.toJSON() as Message[];
+              if (msgs.length > 0) {
+                ws?.send(JSON.stringify({
+                  type: 'read_receipt',
+                  data: { roomId, messageId: msgs[msgs.length - 1].id }
+                }));
+              }
+            }
           }
         }
       };
@@ -512,11 +534,15 @@ export function useChatSync(
   };
 
   const sendReadReceipt = (messageId: string) => {
+    if (roomId === null) return;
     if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
       wsRef.current.send(JSON.stringify({
         type: 'read_receipt',
         data: { roomId, messageId }
       }));
+      pendingReadReceiptRef.current = null;
+    } else {
+      pendingReadReceiptRef.current = { roomId, messageId };
     }
   };
 
